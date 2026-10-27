@@ -1,0 +1,16 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from src.routes import ordens, auth
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(auth.router, prefix="/api/auth", tags=["Autenticação"])
+app.include_router(ordens.orden, prefix="/api/veiculos", tags=["Veículos"])
