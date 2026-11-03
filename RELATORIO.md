@@ -1,6 +1,6 @@
 # Relatorio - API de Controle de Frota
 
-**Aluno:** SEU NOME - RU SEU_RU
+**Aluno:** Daniel de Jesus Ramalhete - RU 5382406
 **Disciplina:** Arquitetura e Desenvolvimento de APIs
 
 ## 1. Objetivo
@@ -74,7 +74,7 @@ Acesse http://127.0.0.1:8000/docs
 
 ## 11. Repositorio
 
-LINK DO GITHUB
+https://github.com/dejesusramalheted-glitch/Projetos-Academicos
 
 ## 12. Consideracoes finais
 
