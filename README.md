@@ -2,6 +2,8 @@
 
 Trabalho da Uninter - Arquitetura e Desenvolvimento de APIs.
 
+**Aluno:** Daniel de Jesus Ramalhete - RU 5382406
+
 API em FastAPI para gerenciar frotas: cadastro de veiculos, abastecimentos, manutencoes, motoristas e atribuicao de veiculo ao motorista.
 
 ## Como rodar
