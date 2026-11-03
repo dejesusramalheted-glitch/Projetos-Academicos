@@ -1,7 +1,7 @@
-from sqlalchemy import Column, Integer, String, Numeric
+from sqlalchemy import Column, Integer, String, Numeric, DateTime
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import relationship
 from src.banco.database import Base
+from datetime import datetime
 
 
 class CarroDb(Base):
@@ -20,6 +20,8 @@ class ManutencaoDb(Base):
     servico_feito = Column(String, nullable=False)
     valor_cobrado = Column(Numeric, nullable=False)
     tempo_garantia = Column(String, nullable=False)
+    data = Column(DateTime, default=datetime.utcnow)
+    carro_id = Column(Integer, ForeignKey("frotas.id"), nullable=False)
 
 
 class AbastecimentoDb(Base):
@@ -38,3 +40,9 @@ class UsuarioDb(Base):
     email = Column(String, unique=True, index=True)
     senha_hash = Column(String)
 
+class MotoristaDb(Base):
+    __tablename__ = "motoristas"
+    id = Column(Integer, primary_key=True, index=True)
+    nome = Column(String, nullable=False)
+    cnh = Column(String, unique=True, nullable=False)
+    carro_id = Column(Integer, ForeignKey("frotas.id"), nullable=True, unique=True)

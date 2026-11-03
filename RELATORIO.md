@@ -1,40 +1,81 @@
-# Relatório Técnico - API de Controle de Frota
+# Relatorio - API de Controle de Frota
 
-## 1. Introdução
-A API resolve o problema de gestão de frotas, permitindo cadastrar veículos, registrar abastecimentos e calcular a média de consumo (km/l).
+**Aluno:** SEU NOME - RU SEU_RU
+**Disciplina:** Arquitetura e Desenvolvimento de APIs
 
-## 2. Tecnologias e Justificativas
-* **FastAPI:** Escolhido pela documentação automática (Swagger) e alta performance.
-* **SQLAlchemy (ORM):** Mapeia as classes Python para o banco SQLite, garantindo integridade relacional (1:N de Carro para Abastecimento).
-* **SQLite:** Banco leve, ideal para reprodução do projeto sem instalar servidores.
-* **JWT:** Autenticação stateless e segura.
+## 1. Objetivo
 
-## 3. Arquitetura
-O código está dividido em: `src/banco` (conexão), `src/modelos` (SQLAlchemy e Pydantic), `src/routes` (endpoints) e `src/main` (configuração FastAPI e CORS).
+API para gerenciar frotas: cadastro de veiculos, abastecimentos, manutencoes, motoristas e atribuicao de veiculo ao motorista.
 
-## 4. Banco de Dados e ORM
-* `CarroDb`: id, modelo, placa, ano.
-* `AbastecimentoDb`: id, km_inicial, km_atual, litros, valor, carro_id (FK).
-* `UsuarioDb`: id, email, senha_hash.
-O ORM garante que a exclusão e criação respeitem as regras do banco.
+## 2. Tecnologias
 
-## 5. Endpoints e HTTP
-| Método | Endpoint | Finalidade | Status |
+Python + FastAPI, SQLAlchemy (ORM), SQLite, Pydantic, PyJWT, Uvicorn.
+
+## 3. Por que essas escolhas
+
+- FastAPI: gera Swagger automatico e valida com Pydantic.
+- SQLAlchemy: evita SQL na mao, cada classe vira tabela.
+- SQLite: banco em arquivo, nao precisa instalar nada.
+- Pydantic: valida os dados de entrada automaticamente.
+- PyJWT: autenticacao com token de 2h.
+- PATCH em vez de PUT: atualiza so os campos que mudaram.
+
+## 4. Organizacao
+
+src/banco/ conexao com o banco
+src/modelos/ tabelas, schemas e regras de negocio
+src/routes/ endpoints separados por tema
+src/main/ configuracao do FastAPI
+
+## 5. Banco e ORM
+
+Tabelas: frotas, Abastecimento, Manutencoes, motoristas, usuarios.
+Cada classe em modelo_banco.py vira tabela. FKs ligam abastecimentos e manutencoes ao carro. motoristas.carro_id e unique para garantir um motorista por carro.
+
+## 6. Endpoints
+
+| Metodo | Endpoint | O que faz | Respostas |
 |---|---|---|---|
-| POST | /api/auth/registrar | Cadastrar usuário | 201/400 |
-| POST | /api/auth/login | Login e Token | 200/401 |
-| GET | /api/veiculos/{id} | Buscar veículo | 200/404 |
-| POST | /api/veiculos/cadastro_frota | Criar veículo | 201/401 |
-| POST | /api/veiculos/abastecimento | Registrar abastecimento | 201/401 |
-| DELETE | /api/veiculos/{id} | Excluir veículo | 204/401 |
+| POST | /api/auth/registrar | cria usuario | 200 / 400 |
+| POST | /api/auth/login | gera token | 200 / 401 |
+| GET | /api/veiculos/ | lista frotas | 200 |
+| GET | /api/veiculos/{id} | busca por id | 200 / 404 |
+| GET | /api/veiculos/buscar/placa/{placa} | busca por placa | 200 / 404 |
+| POST | /api/veiculos/cadastro_frota | cadastra | 201 / 400 |
+| PATCH | /api/veiculos/{id} | atualiza | 200 / 400 / 404 |
+| DELETE | /api/veiculos/{id} | remove | 204 / 401 / 404 |
+| POST | /api/veiculos/abastecimento | abastecimento | 201 / 404 |
+| POST | /api/veiculos/manutencao | manutencao | 201 / 404 |
+| GET | /api/motoristas/ | lista motoristas | 200 |
+| POST | /api/motoristas/ | cria motorista | 201 |
+| POST | /api/motoristas/{id}/atribuir-frota/{carro_id} | atribui | 200 / 400 / 404 |
+| GET | /api/dashboard | resumo | 200 |
 
-## 6. Validação, Autenticação e CORS
-* **Validação:** Realizada pelo Pydantic. Dados inválidos retornam 400.
-* **Autenticação:** Via JWT. O token é validado no Header `Authorization: Bearer <token>`.
-* **CORS:** Configurado como `allow_origins=["*"]` para permitir testes. Em produção, seria restrito.
+## 7. Validacao e erros
 
-## 7. Evidências e Execução
-Para executar: `python run.py`. O Swagger está disponível em `/docs` e serve como evidência de funcionamento e testes.
+Pydantic valida entrada. Exemplos: placa repetida retorna 400, id inexistente retorna 404, DELETE sem token retorna 401, valor negativo retorna 422.
 
-## 8. Repositório
-(LINK DO SEU GITHUB AQUI)
+## 8. Autenticacao e CORS
+
+JWT HS256 com 2h de validade. O DELETE e a evidencia de endpoint protegido: 401 sem token, 204 com token. Senha com SHA-256. CORS com allow_origins=["*"] para facilitar teste; em producao ficaria restrito.
+
+## 9. Testes
+
+tests/teste_fluxo.py testa cadastro, abastecimento, dashboard e DELETE com/sem token.
+
+## 10. Como rodar
+
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python run.py
+
+Acesse http://127.0.0.1:8000/docs
+
+## 11. Repositorio
+
+LINK DO GITHUB
+
+## 12. Consideracoes finais
+
+Dificuldades: JWT (pacote jwt vs PyJWT), alinhar Pydantic com SQLAlchemy, retorno None no DELETE 204. Limitacoes: SHA-256 em vez de bcrypt, CORS aberto, sem paginacao. Melhorias: bcrypt, paginacao, pytest, deploy.

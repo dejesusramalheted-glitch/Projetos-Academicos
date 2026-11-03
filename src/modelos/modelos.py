@@ -1,7 +1,5 @@
 
 from pydantic import BaseModel, Field, ConfigDict
-from decimal import Decimal
-from .modelo_banco import CarroDb
 
 
 class Login(BaseModel):
@@ -30,9 +28,14 @@ class ManutencaoBase(BaseModel):
 class CriaManutencao(ManutencaoBase):
     pass 
 
-class ManutencaoResposta(CriaManutencao): 
+class ManutencaoResposta(BaseModel):
     id: int
+    servico_feito: str
+    valor_cobrado: float
+    tempo_garantia: str
+
     model_config = ConfigDict(from_attributes=True)
+
 
 class CriaAbastecimento(BaseModel):
     km_inicial: int
